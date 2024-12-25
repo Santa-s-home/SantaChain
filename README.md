@@ -1,8 +1,17 @@
 # SantaChain NFT Collection 🎅🔗
 
+## 🛑 Repository Archived
+
+**Important Notice:**
+This repository has been **archived** due to a compromise in our backup service. As a precautionary measure, we have moved the codebase to a private repository to ensure security and maintain the integrity of the SantaChain project.
+Note: The deployed contract address remains unchanged and is fully operational.
+
+---
+
 ![Banner](./assets/banner.webp)
 
 Welcome to **SantaChain**, a unique collection of Santa-themed NFTs built on the Ethereum blockchain. Embrace the festive spirit with exclusive digital collectibles that capture the magic of the holiday season.
+
 ## 🎊 Deployed Contract Address
 
 ```js
