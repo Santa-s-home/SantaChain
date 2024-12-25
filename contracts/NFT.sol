@@ -7,16 +7,44 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract SantaNFT is ERC721, Ownable {
     uint256 public tokenCounter;
+    uint256 public maxSupply;
+    mapping(uint256 => string) private _tokenURIs;
 
-    constructor() ERC721("SantaNFT", "SANTA") {
+    public string secret = "RDCTF{54n74Ch41N_53CR37_123}";
+    event CollectibleCreated(address indexed owner, uint256 indexed tokenId, string tokenURI);
+
+    constructor(uint256 _maxSupply) ERC721("SantaNFT", "SANTA") {
+        require(_maxSupply > 0, "Max supply must be greater than zero");
         tokenCounter = 0;
+        maxSupply = _maxSupply;
     }
 
-    function createCollectible() public onlyOwner returns (uint256) {
+    function createCollectible(string memory tokenURI) public onlyOwner returns (uint256) {
+        require(tokenCounter < maxSupply, "Max supply reached");
+
         uint256 newTokenId = tokenCounter;
         _safeMint(msg.sender, newTokenId);
+        _setTokenURI(newTokenId, tokenURI);
+
         tokenCounter += 1;
+
+        emit CollectibleCreated(msg.sender, newTokenId, tokenURI);
+
         return newTokenId;
     }
 
+    function _setTokenURI(uint256 tokenId, string memory tokenURI) internal {
+        require(_exists(tokenId), "ERC721Metadata: URI set of nonexistent token");
+        _tokenURIs[tokenId] = tokenURI;
+    }
+
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
+        require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
+        return _tokenURIs[tokenId];
+    }
+
+    function updateMaxSupply(uint256 newMaxSupply) public onlyOwner {
+        require(newMaxSupply >= tokenCounter, "New max supply must be greater than or equal to current supply");
+        maxSupply = newMaxSupply;
+    }
 }
