@@ -21,13 +21,21 @@ contract SantaNFT is ERC721, Ownable {
     event RewardClaimed(address indexed claimer, uint256 amount);
     event RoyaltySet(uint256 indexed tokenId, address indexed recipient, uint256 percentage);
     event RoyaltyPaid(address indexed recipient, uint256 amount);
+    event Staked(address indexed staker, uint256 tokenId, uint256 timestamp);
+    event Unstaked(address indexed staker, uint256 tokenId, uint256 timestamp);
 
     struct RoyaltyInfo {
         address recipient;
         uint256 percentage; // in basis points (e.g., 100 = 1%)
     }
 
+    struct StakeInfo {
+        address staker;
+        uint256 timestamp;
+    }
+
     mapping(uint256 => RoyaltyInfo) private _royalties;
+    mapping(uint256 => StakeInfo) private _stakes;
 
     constructor(uint256 _maxSupply, address _rewardToken, uint256 _rewardAmount) ERC721("SantaNFT", "SANTA") {
         require(_maxSupply > 0, "Max supply must be greater than zero");
@@ -109,5 +117,29 @@ contract SantaNFT is ERC721, Ownable {
             rewardToken.transfer(royalty.recipient, royaltyAmount);
             emit RoyaltyPaid(royalty.recipient, royaltyAmount);
         }
+    }
+
+    function stake(uint256 tokenId) public {
+        require(_isApprovedOrOwner(msg.sender, tokenId), "Caller is not owner nor approved");
+        require(_stakes[tokenId].staker == address(0), "Token is already staked");
+
+        _stakes[tokenId] = StakeInfo({
+            staker: msg.sender,
+            timestamp: block.timestamp
+        });
+
+        emit Staked(msg.sender, tokenId, block.timestamp);
+    }
+
+    function unstake(uint256 tokenId) public {
+        require(_stakes[tokenId].staker == msg.sender, "Caller is not the staker");
+
+        delete _stakes[tokenId];
+
+        emit Unstaked(msg.sender, tokenId, block.timestamp);
+    }
+
+    function getStakeInfo(uint256 tokenId) public view returns (StakeInfo memory) {
+        return _stakes[tokenId];
     }
 }
