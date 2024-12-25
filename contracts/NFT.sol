@@ -46,4 +46,10 @@ contract SantaNFT is ERC721, Ownable {
         require(newMaxSupply >= tokenCounter, "New max supply must be greater than or equal to current supply");
         maxSupply = newMaxSupply;
     }
+
+    function transferCollectible(address to, uint256 tokenId) public {
+        require(_isApprovedOrOwner(msg.sender, tokenId), "Caller is not owner nor approved");
+        _transfer(msg.sender, to, tokenId);
+        emit CollectibleTransferred(msg.sender, to, tokenId);
+    }
 }
