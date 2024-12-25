@@ -19,6 +19,15 @@ contract SantaNFT is ERC721, Ownable {
     event CollectibleTransferred(address indexed from, address indexed to, uint256 indexed tokenId);
     event OwnershipRenounced(address indexed previousOwner);
     event RewardClaimed(address indexed claimer, uint256 amount);
+    event RoyaltySet(uint256 indexed tokenId, address indexed recipient, uint256 percentage);
+    event RoyaltyPaid(address indexed recipient, uint256 amount);
+
+    struct RoyaltyInfo {
+        address recipient;
+        uint256 percentage; // in basis points (e.g., 100 = 1%)
+    }
+
+    mapping(uint256 => RoyaltyInfo) private _royalties;
 
     constructor(uint256 _maxSupply, address _rewardToken, uint256 _rewardAmount) ERC721("SantaNFT", "SANTA") {
         require(_maxSupply > 0, "Max supply must be greater than zero");
@@ -63,6 +72,7 @@ contract SantaNFT is ERC721, Ownable {
     function transferCollectible(address to, uint256 tokenId) public {
         require(_isApprovedOrOwner(msg.sender, tokenId), "Caller is not owner nor approved");
         _transfer(msg.sender, to, tokenId);
+        _payRoyalty(tokenId);
         emit CollectibleTransferred(msg.sender, to, tokenId);
     }
 
@@ -83,5 +93,21 @@ contract SantaNFT is ERC721, Ownable {
     function updateRewardAmount(uint256 newRewardAmount) public onlyOwner {
         require(newRewardAmount > 0, "Reward amount must be greater than zero");
         rewardAmount = newRewardAmount;
+    }
+
+    function setRoyalty(uint256 tokenId, address recipient, uint256 percentage) public onlyOwner {
+        require(_exists(tokenId), "Token does not exist");
+        require(percentage <= 1000, "Royalty percentage too high"); // Max 10%
+        _royalties[tokenId] = RoyaltyInfo(recipient, percentage);
+        emit RoyaltySet(tokenId, recipient, percentage);
+    }
+
+    function _payRoyalty(uint256 tokenId) internal {
+        RoyaltyInfo memory royalty = _royalties[tokenId];
+        if (royalty.recipient != address(0) && royalty.percentage > 0) {
+            uint256 royaltyAmount = (rewardAmount * royalty.percentage) / 10000;
+            rewardToken.transfer(royalty.recipient, royaltyAmount);
+            emit RoyaltyPaid(royalty.recipient, royaltyAmount);
+        }
     }
 }
