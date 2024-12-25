@@ -1,7 +1,13 @@
 # SantaChain NFT Collection 🎅🔗
 
 ![Banner](./assets/banner.webp)
+
 Welcome to **SantaChain**, a unique collection of Santa-themed NFTs built on the Ethereum blockchain. Embrace the festive spirit with exclusive digital collectibles that capture the magic of the holiday season.
+## 🎊 Deployed Contract Address
+
+```js
+latest version of the contract is deployed at 0x79D2eC1A38d7Fe07fa862115407cF115724cd04f on the Holesky Testnet
+```
 
 ## 🌟 Features
 
