@@ -1,5 +1,6 @@
 # SantaChain NFT Collection 🎅🔗
 
+![Banner](./assets/banner.webp)
 Welcome to **SantaChain**, a unique collection of Santa-themed NFTs built on the Ethereum blockchain. Embrace the festive spirit with exclusive digital collectibles that capture the magic of the holiday season.
 
 ## 🌟 Features
