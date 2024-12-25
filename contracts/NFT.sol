@@ -10,7 +10,6 @@ contract SantaNFT is ERC721, Ownable {
     uint256 public maxSupply;
     mapping(uint256 => string) private _tokenURIs;
 
-    public string secret = "RDCTF{54n74Ch41N_53CR37_123}";
     event CollectibleCreated(address indexed owner, uint256 indexed tokenId, string tokenURI);
 
     constructor(uint256 _maxSupply) ERC721("SantaNFT", "SANTA") {
