@@ -52,4 +52,10 @@ contract SantaNFT is ERC721, Ownable {
         _transfer(msg.sender, to, tokenId);
         emit CollectibleTransferred(msg.sender, to, tokenId);
     }
+
+    function renounceOwnership() public onlyOwner {
+        address previousOwner = owner();
+        _transferOwnership(address(0));
+        emit OwnershipRenounced(previousOwner);
+    }
 }
